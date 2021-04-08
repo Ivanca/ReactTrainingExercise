@@ -50,10 +50,11 @@ const SignUp = ({ setToken }: SignUpProps) => {
     <div>
       <h1>Register!</h1>
       <Formik
-        initialValues={{ email: '', password: '', avatar: '' }}
+        initialValues={({ email: '', password: '', avatar: '' } as any)}
         validationSchema={SignupSchema}
         onSubmit={(values, { setSubmitting }) => {
           setSubmitting(true);
+          delete values.confirmPassword;
           jsonRequest('POST', `${BACKEND_URL}/users`, '', values).then(data => {
             setToken(data.accessToken);
             setSubmitting(false);
