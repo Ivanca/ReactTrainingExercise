@@ -26,8 +26,8 @@ const EventCard = ({event, loggedIn, addToFavorites}: EventCardProps) => {
             <Heading as="h3" size="lg">{event.name}</Heading>
             <p className="location">Location: {event.location}</p>
             <p className="description">{event.description}</p>
-            <p className="host">Host: {event.description}</p>
-            <p className="tags">{event.description}</p>
+            <p className="host">Host: {event.host}</p>
+            <p className="tags">{event.tags}</p>
             {loggedIn && <button onClick={addToFavorites}>Favorite</button>}
         </Box>
     )
