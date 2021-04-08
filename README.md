@@ -1,10 +1,16 @@
 # Getting Started with Create React App
 
+## Quick start
+
+Start the fake backend process:
+
+`json-server db.json -m ./node_modules/json-server-auth`
+
+Then run the react app:
+
+`npm start`
+
 ## Available Scripts
-
-### Start the fake backend server
-
-json-server db.json -m ./node_modules/json-server-auth
 
 In the project directory, you can run:
 
