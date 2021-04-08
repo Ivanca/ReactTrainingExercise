@@ -1,0 +1,57 @@
+{
+  "events": [
+    {
+      "date": "2021-04-09T05:00:00.000Z",
+      "description": "Whatever",
+      "host": "2",
+      "tags": "asdf",
+      "type": "public",
+      "location": "sadfasdf",
+      "name": "asdfasdf",
+      "id": 3
+    }
+  ],
+  "favoriteEvents": [
+    {
+      "id": 1,
+      "userId": 1,
+      "eventId": 1
+    },
+    {
+      "id": 1617821050878,
+      "userId": -1,
+      "eventId": 1
+    },
+    {
+      "id": 1617824359085,
+      "userId": 2,
+      "eventId": "sdf"
+    },
+    {
+      "id": 1617824379754,
+      "userId": 2,
+      "eventId": 1
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "firstName": "Benito",
+      "lastName": "Garavito",
+      "avatar": "",
+      "birthday": "1776/01/18",
+      "email": "test@example.com",
+      "password": "123456"
+    },
+    {
+      "email": "loquito@gmail.com",
+      "password": "$2a$10$vzaCQ2b9BbvRIo0dyc8lVOO2UANp2sKtEJdprmYkwu4LMH7GvIY1G",
+      "avatar": {},
+      "firstName": "asd",
+      "lastName": "asd",
+      "confirmPassword": "fuckthis1@",
+      "birthday": "2021-04-01",
+      "id": 2
+    }
+  ]
+}
