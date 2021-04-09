@@ -1,16 +1,16 @@
 
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Button, Heading } from '@chakra-ui/react';
 import { Event } from '../types';
 
 
 type EventCardProps = {
     event: Event,
     loggedIn: boolean,
-    addToFavorites: () => void
+    addToFavorites?: () => void
 }
 
 const EventCard = ({event, loggedIn, addToFavorites}: EventCardProps) => {
-
+    console.log(event)
     return (
         <Box 
             className="event"
@@ -24,9 +24,9 @@ const EventCard = ({event, loggedIn, addToFavorites}: EventCardProps) => {
             <Heading as="h3" size="lg">{event.name}</Heading>
             <p className="location">Location: {event.location}</p>
             <p className="description">{event.description}</p>
-            <p className="host">Host: {event.host}</p>
+            <p className="host">Host: {event.user.firstName} {event.user.lastName}</p>
             <p className="tags">{event.tags}</p>
-            {loggedIn && <button onClick={addToFavorites}>Favorite</button>}
+            {loggedIn && addToFavorites && <Button onClick={addToFavorites}>Favorite</Button>}
         </Box>
     )
 }

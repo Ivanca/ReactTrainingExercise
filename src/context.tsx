@@ -101,7 +101,7 @@ export async function loginUser(dispatch: any, loginPayload: any) {
       } });
       localStorage.setItem('user', JSON.stringify({
         accessToken: data.accessToken,
-        data: user
+        user: user
       }));
       return {success: true};
     }

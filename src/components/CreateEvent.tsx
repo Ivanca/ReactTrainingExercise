@@ -21,7 +21,7 @@ export const CreateEvent = () => {
     });
 
     const userDetails = useAuthState();
-
+    console.log(userDetails);
     return (
         <div>
             <Heading>Create a new event</Heading>

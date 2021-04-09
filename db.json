@@ -3,7 +3,7 @@
     {
       "date": "2021-04-09T05:00:00.000Z",
       "description": "Whatever",
-      "host": "2",
+      "userId": 2,
       "tags": "asdf",
       "type": "public",
       "location": "sadfasdf",
@@ -31,6 +31,11 @@
       "id": 1617824379754,
       "userId": 2,
       "eventId": 1
+    },
+    {
+      "id": 1618000531065,
+      "userId": 2,
+      "eventId": 3
     }
   ],
   "users": [

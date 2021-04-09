@@ -28,7 +28,7 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
   const userDetails = useAuthState();
 
   const { isLoading, error, data } = useQuery(['eventsData', { filters }], () => {
-    var paramsObj: { [key: string]: string } = Object.assign({}, filters);
+    var paramsObj: { [key: string]: string } = Object.assign({'_expand': 'user'}, filters);
     for (const [key, value] of Object.entries(paramsObj)) {
       if (!value) {
         delete paramsObj[key];
@@ -36,9 +36,10 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
     }
     if (favoritesOnly) {
       return (async () => {
-        const favs: FavData[] = await jsonRequest('GET', `${BACKEND_URL}/favoriteEvents?userId=${userDetails?.user.id}`);
+        const url = `${BACKEND_URL}/favoriteEvents?userId=${userDetails?.user.id}`;
+        const favs: FavData[] = await jsonRequest('GET', url);
         const onlyFavsQuery = favs.map((entry) => 'id=' + entry.eventId).join('&');
-        return jsonRequest('GET', `${BACKEND_URL}/events?${onlyFavsQuery}`);
+        return jsonRequest('GET', `${BACKEND_URL}/events?${onlyFavsQuery}&_expand=user`);
       })()
     }
     return jsonRequest('GET', `${BACKEND_URL}/events?${new URLSearchParams(paramsObj)}`);
@@ -59,7 +60,11 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
   var events:JSX.Element[] = [];
   if (data) {
     events = data.map((event: Event) =>
-      <EventCard key={event.id} event={event} addToFavorites={addToFavorites.bind(this, event.id)} loggedIn={!!userDetails?.token} />
+      <EventCard
+        key={event.id}
+        event={event}
+        addToFavorites={!favoritesOnly ? addToFavorites.bind(this, event.id) : undefined}
+        loggedIn={!!userDetails?.token} />
     )
   }
   return (
