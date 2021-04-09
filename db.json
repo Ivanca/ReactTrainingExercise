@@ -51,6 +51,15 @@
       "lastName": "asd",
       "birthday": "2021-04-01",
       "id": 2
+    },
+    {
+      "email": "foo@bar.com",
+      "password": "$2a$10$lH5TJrr7QEaGKt0HUzkeK.LnxFXHMboVtBAlksDCvdWe/a4PLpytW",
+      "avatar": {},
+      "firstName": "foo",
+      "lastName": "bar",
+      "birthday": "2021-04-06T05:00:00.000Z",
+      "id": 3
     }
   ]
 }

@@ -1,6 +1,5 @@
 
 import { Box, Heading } from '@chakra-ui/react';
-import React from 'react';
 import { Event } from '../types';
 
 
@@ -14,7 +13,6 @@ const EventCard = ({event, loggedIn, addToFavorites}: EventCardProps) => {
 
     return (
         <Box 
-            key={event.id}
             className="event"
             bg="#ffffff"
             rounded="lg"

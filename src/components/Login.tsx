@@ -1,12 +1,9 @@
-import { Form, Field, ErrorMessage } from "formik"
+import { Form, Field } from "formik"
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Link, useHistory } from "react-router-dom";
-import { BACKEND_URL } from '../constants'
-import { jsonRequest } from '../utils'
-import useToken from '../useToken';
-import React from "react";
-import { Button, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
+import { Link as RouterLink, useHistory } from "react-router-dom";
+import { Link, Box, Heading, Button, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
+import { loginUser, useAuthDispatch } from "../context";
 
 
 const LoginSchema = Yup.object().shape({
@@ -16,28 +13,25 @@ const LoginSchema = Yup.object().shape({
     .required('Required')
 });
 
-type LoginProps = {
-  setToken: (userToken: { [key: string]: string; }) => void
-};
 
-export default function Login({setToken}: LoginProps) {
+export default function Login() {
 
   const history = useHistory();
+  const dispatch = useAuthDispatch() //get the dispatch method from the useDispatch custom hook
 
-  const handleSubmit = async (credentials: { email: string, password: string }) => {
-    const token = await jsonRequest('POST', `${BACKEND_URL}/login`, '', credentials);
-    setToken(token);
+  const login = async (credentials: { email: string, password: string }) => {
+    return await loginUser(dispatch, credentials);
   }
 
   return (
-    <div>
-      <h1>Any place in your app!</h1>
+    <Box>
+      <Heading as="h3">Register!</Heading>
       <Formik
         initialValues={{ email: '', password: '' }}
         validationSchema={LoginSchema}
         onSubmit={(values, { setSubmitting }) => {
           setSubmitting(true);
-          handleSubmit(values).then(() => {
+          login(values).then(() => {
             setSubmitting(false);
             history.push("/");
           })
@@ -45,8 +39,6 @@ export default function Login({setToken}: LoginProps) {
       >
         {({ isSubmitting }) => (
           <Form>
-
-
             <Field type="text" name="email">
             {({ field, form }: {field:any, form:any}) => (
               <FormControl isInvalid={form.errors.email && form.touched.email}>
@@ -73,8 +65,8 @@ export default function Login({setToken}: LoginProps) {
           </Form>
         )}
       </Formik>
-      <Link to="/signup">New user, sign up!</Link>
-    </div>
+      <Link as={RouterLink} to="/signup"><Button mt={3}>New user, sign up!</Button></Link>
+    </Box>
 
   )
 }

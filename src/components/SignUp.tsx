@@ -3,10 +3,11 @@ import * as Yup from "yup";
 import ImageInput from './ImageInput'
 import { jsonRequest } from "../utils";
 import { BACKEND_URL } from "../constants";
-import useToken from "../useToken";
-import React from "react";
 import { FormControl, FormLabel, Input, FormErrorMessage, Button } from "@chakra-ui/react";
 import { DatePickerField } from "./DatePicker";
+import { useHistory } from "react-router-dom";
+import { useAuthDispatch, loginUser } from "../context";
+import { Box, Heading } from '@chakra-ui/react';
 
 const MAX_FILE_SIZE = 160 * 1024;
 const SUPPORTED_AVATAR_FILE_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
@@ -40,15 +41,20 @@ const SignupSchema = Yup.object().shape({
     .test('fileType', "Unsupported File Format", value => value && SUPPORTED_AVATAR_FILE_FORMATS.includes(value.type))
 });
 
-type SignUpProps = {
-  setToken: (userToken: { [key: string]: string; }) => void
-};
 
-const SignUp = ({ setToken }: SignUpProps) => {
+
+const SignUp = () => {
+
+  const history = useHistory();
+  const dispatch = useAuthDispatch() //get the dispatch method from the useDispatch custom hook
+
+  const login = async (credentials: { email: string, password: string }) => {
+    return await loginUser(dispatch, credentials);
+  }
 
   return (
-    <div>
-      <h1>Register!</h1>
+    <Box>
+      <Heading as="h3">Register!</Heading>
       <Formik
         initialValues={({ email: '', password: '', avatar: '' } as any)}
         validationSchema={SignupSchema}
@@ -56,8 +62,10 @@ const SignUp = ({ setToken }: SignUpProps) => {
           setSubmitting(true);
           delete values.confirmPassword;
           jsonRequest('POST', `${BACKEND_URL}/users`, '', values).then(data => {
-            setToken(data.accessToken);
+            return login({email: values.email, password: values.password})
+          }).then(e => {
             setSubmitting(false);
+            history.push("/");
           });
         }}
       >
@@ -67,7 +75,7 @@ const SignUp = ({ setToken }: SignUpProps) => {
             {({ field, form }: {field:any, form:any}) => (
               <FormControl isInvalid={form.errors.email && form.touched.email}>
                 <FormLabel htmlFor="email">Email</FormLabel>
-                <Input {...field} id="email" placeholder="email" />
+                <Input {...field} id="email" placeholder="" />
                 <FormErrorMessage>{form.errors.email}</FormErrorMessage>
               </FormControl>
             )}
@@ -76,7 +84,7 @@ const SignUp = ({ setToken }: SignUpProps) => {
             {({ field, form }: {field:any, form:any}) => (
               <FormControl isInvalid={form.errors.firstName && form.touched.firstName}>
                 <FormLabel htmlFor="firstName">First Name</FormLabel>
-                <Input {...field} id="firstName" placeholder="firstName" />
+                <Input {...field} id="firstName" placeholder="" />
                 <FormErrorMessage>{form.errors.firstName}</FormErrorMessage>
               </FormControl>
             )}
@@ -85,7 +93,7 @@ const SignUp = ({ setToken }: SignUpProps) => {
             {({ field, form }: {field:any, form:any}) => (
               <FormControl isInvalid={form.errors.lastName && form.touched.lastName}>
                 <FormLabel htmlFor="lastName">Last Name</FormLabel>
-                <Input {...field} id="lastName" placeholder="lastName" />
+                <Input {...field} id="lastName" placeholder="" />
                 <FormErrorMessage>{form.errors.email}</FormErrorMessage>
               </FormControl>
             )}
@@ -102,8 +110,8 @@ const SignUp = ({ setToken }: SignUpProps) => {
             <Field type="password" name="password">
             {({ field, form }: {field:any, form:any}) => (
               <FormControl isInvalid={form.errors.password && form.touched.password}>
-                <FormLabel htmlFor="password">Oassword</FormLabel>
-                <Input {...field} id="password" placeholder="password" />
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <Input type="password" {...field} id="password" placeholder="" />
                 <FormErrorMessage>{form.errors.password}</FormErrorMessage>
               </FormControl>
             )}
@@ -112,7 +120,7 @@ const SignUp = ({ setToken }: SignUpProps) => {
             {({ field, form }: {field:any, form:any}) => (
               <FormControl isInvalid={form.errors.confirmPassword && form.touched.confirmPassword}>
                 <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
-                <Input {...field} id="confirmPassword" placeholder="confirmPassword" />
+                <Input type="password" {...field} id="confirmPassword" placeholder="" />
                 <FormErrorMessage>{form.errors.confirmPassword}</FormErrorMessage>
               </FormControl>
             )}
@@ -123,7 +131,7 @@ const SignUp = ({ setToken }: SignUpProps) => {
           </Form>
         )}
       </Formik>
-    </div>
+    </Box>
   )
 }
 

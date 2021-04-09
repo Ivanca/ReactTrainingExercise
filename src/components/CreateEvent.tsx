@@ -1,21 +1,14 @@
 // Render Prop
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import { jsonRequest } from '../utils';
 import { BACKEND_URL } from '../constants';
 
 import * as Yup from "yup";
-import useToken from '../useToken';
 import { FormControl, FormLabel, Input, FormErrorMessage, Button, Heading, Select } from '@chakra-ui/react';
 import { DatePickerField } from './DatePicker';
+import { useAuthState } from '../context';
 
-
-type CreateEventProps = {
-    userId: number,
-    token: string
-};
-
-export const CreateEvent = ({userId, token}: CreateEventProps) => {
+export const CreateEvent = () => {
 
     const SignupSchema = Yup.object().shape({
         date: Yup.date().required('Required'),
@@ -27,6 +20,8 @@ export const CreateEvent = ({userId, token}: CreateEventProps) => {
         name: Yup.string().required('Required')
     });
 
+    const userDetails = useAuthState();
+
     return (
         <div>
             <Heading>Create a new event</Heading>
@@ -35,7 +30,7 @@ export const CreateEvent = ({userId, token}: CreateEventProps) => {
                 initialValues={{
                     date: '',
                     description: '',
-                    host: userId,
+                    host: userDetails?.user.id,
                     tags: '',
                     type: '',
                     location: '',
@@ -44,7 +39,7 @@ export const CreateEvent = ({userId, token}: CreateEventProps) => {
                 validationSchema={SignupSchema}
                 onSubmit={(values, { setSubmitting }) => {
                     setSubmitting(true);
-                    jsonRequest('POST', `${BACKEND_URL}/events`, token, values).then(e => {
+                    jsonRequest('POST', `${BACKEND_URL}/events`, userDetails?.token, values).then(e => {
                         setSubmitting(false);
                     });
                 }}
