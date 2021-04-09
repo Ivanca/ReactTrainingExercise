@@ -1,12 +1,13 @@
 import { useQuery } from 'react-query'
 import { BACKEND_URL } from "../constants";
 import { jsonRequest } from '../utils';
-import { Event, FavData } from '../types'
+import { Event, FavData, User } from '../types'
 import React from 'react';
 import { Field, Form, Formik } from 'formik';
-import { FormControl, FormLabel, Input, FormErrorMessage, Box, HStack, Radio, RadioGroup, Stack, Button } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, FormErrorMessage, Box, HStack, Radio, RadioGroup, Stack, Button, Text } from '@chakra-ui/react';
 import EventCard from './EventCard';
 import { useAuthState } from '../context';
+import { isDoStatement } from 'typescript';
 
 type EventsFeedProps = {
   favoritesOnly: boolean,
@@ -27,25 +28,32 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
 
   const userDetails = useAuthState();
 
-  const { isLoading, error, data } = useQuery(['eventsData', { filters }], () => {
-    var paramsObj: { [key: string]: string } = Object.assign({'_expand': 'user'}, filters);
+  const { isLoading, error, data } = useQuery(['eventsData', { filters }], async () => {
+    let paramsObj: { [key: string]: string } = Object.assign({'_expand': 'user'}, filters);
+    let parameters = ['expand=user'];
+    if (favoritesOnly) {
+      const url = `${BACKEND_URL}/favoriteEvents?userId=${userDetails?.user.id}`;
+      const favs: FavData[] = await jsonRequest('GET', url);
+      const onlyFavsQuery = favs.map((entry) => 'id=' + entry.eventId).join('&');
+      return jsonRequest('GET', `${BACKEND_URL}/events?${onlyFavsQuery}&_expand=user`);
+    }
     for (const [key, value] of Object.entries(paramsObj)) {
-      if (!value) {
-        delete paramsObj[key];
+      if (value) {
+        if (key === 'host') {
+          const url = `${BACKEND_URL}/users?firstName_like=${encodeURIComponent(value)}`;
+          const users = await jsonRequest('GET', url);
+          if (!users.length) {
+            return [];
+          }
+          const userIds = users.map((user: User) => `userId=${user.id}`);
+          parameters = [...parameters, ...userIds];
+        } else {
+          parameters.push(`${key}=${encodeURIComponent(value)}`)
+        }
       }
     }
-    if (favoritesOnly) {
-      return (async () => {
-        const url = `${BACKEND_URL}/favoriteEvents?userId=${userDetails?.user.id}`;
-        const favs: FavData[] = await jsonRequest('GET', url);
-        const onlyFavsQuery = favs.map((entry) => 'id=' + entry.eventId).join('&');
-        return jsonRequest('GET', `${BACKEND_URL}/events?${onlyFavsQuery}&_expand=user`);
-      })()
-    }
-    return jsonRequest('GET', `${BACKEND_URL}/events?${new URLSearchParams(paramsObj)}`);
-  })
-
-  if (isLoading) return (<div>'Loading...'</div>);
+    return jsonRequest('GET', `${BACKEND_URL}/events?${parameters.join('&')}`);
+  });
 
   if (error) return (<div>'An error has occurred: ' + (error as any).message</div>);
 
@@ -82,25 +90,23 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
               <HStack spacing={7}>
                 <Field type="text" name="type">
                   {({ field, form }: { field: any, form: any }) => (
-
-
                     <FormControl isInvalid={form.errors.type && form.touched.type}>
                       <RadioGroup >
                         <Stack direction="column">
                           <Radio {...field} value="public">Public</Radio>
                           <Radio {...field} value="private">Private</Radio>
+                          <Radio {...field} value="">All</Radio>
                         </Stack>
                       </RadioGroup>
                       <FormErrorMessage>{form.errors.type}</FormErrorMessage>
                     </FormControl>
                   )}
                 </Field>
-
                 <Field type="text" name="date">
                   {({ field, form }: { field: any, form: any }) => (
                     <FormControl isInvalid={form.errors.date && form.touched.date}>
                       <FormLabel htmlFor="date">Date</FormLabel>
-                      <Input {...field} id="date" placeholder="date" />
+                      <Input {...field} id="date" placeholder="" />
                       <FormErrorMessage>{form.errors.date}</FormErrorMessage>
                     </FormControl>
                   )}
@@ -108,8 +114,8 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
                 <Field type="text" name="host">
                   {({ field, form }: { field: any, form: any }) => (
                     <FormControl isInvalid={form.errors.host && form.touched.host}>
-                      <FormLabel htmlFor="host">Host</FormLabel>
-                      <Input {...field} id="host" placeholder="host" />
+                      <FormLabel htmlFor="host">Host name</FormLabel>
+                      <Input {...field} id="host" placeholder="" />
                       <FormErrorMessage>{form.errors.host}</FormErrorMessage>
                     </FormControl>
                   )}
@@ -118,7 +124,7 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
                   {({ field, form }: { field: any, form: any }) => (
                     <FormControl isInvalid={form.errors.location && form.touched.location}>
                       <FormLabel htmlFor="location">Location</FormLabel>
-                      <Input {...field} id="location" placeholder="location" />
+                      <Input {...field} id="location" placeholder="" />
                       <FormErrorMessage>{form.errors.location}</FormErrorMessage>
                     </FormControl>
                   )}
@@ -131,7 +137,7 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
           )}
         </Formik>
       </Box>
-      {events}
+      {isLoading ? <Text>Is Loading</Text>: events}
     </Box>
   )
 }

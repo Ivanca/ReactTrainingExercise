@@ -24,7 +24,7 @@ const Header = () => {
                 EventBright
               </Text>
             </Link>
-            <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
+            <Flex display={{ base: 'none', md: 'flex' }} ml={3}>
               <Link as={RouterLink} to="/events" mr={3}><Button>Events</Button></Link>
               {loggedIn && <Link as={RouterLink} to="/favorited" mr={3}><Button>Favorite Events</Button></Link>}
               {loggedIn && <Link as={RouterLink} to="/create-event" mr={3}><Button>Create Event</Button></Link>}
