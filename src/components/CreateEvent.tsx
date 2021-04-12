@@ -2,26 +2,14 @@
 import { Formik, Form, Field } from 'formik';
 import { jsonRequest } from '../utils';
 import { BACKEND_URL } from '../constants';
-
-import * as Yup from "yup";
 import { FormControl, FormLabel, Input, FormErrorMessage, Button, Heading, Select } from '@chakra-ui/react';
 import { DatePickerField } from './DatePicker';
 import { useAuthState } from '../context';
+import { CreateEventSchema } from '../schemas'
 
 export const CreateEvent = () => {
 
-    const SignupSchema = Yup.object().shape({
-        date: Yup.date().required('Required'),
-        description: Yup.string().required('Required'),
-        host: Yup.number().required('Required'),
-        tags: Yup.string(),
-        type: Yup.string().required('Required'),
-        location: Yup.string().required('Required'),
-        name: Yup.string().required('Required')
-    });
-
     const userDetails = useAuthState();
-    console.log(userDetails);
     return (
         <div>
             <Heading>Create a new event</Heading>
@@ -30,13 +18,13 @@ export const CreateEvent = () => {
                 initialValues={{
                     date: '',
                     description: '',
-                    host: userDetails?.user.id,
+                    userId: userDetails?.user.id,
                     tags: '',
                     type: '',
                     location: '',
                     name: ''
                 }}
-                validationSchema={SignupSchema}
+                validationSchema={CreateEventSchema}
                 onSubmit={(values, { setSubmitting }) => {
                     setSubmitting(true);
                     jsonRequest('POST', `${BACKEND_URL}/events`, userDetails?.token, values).then(e => {
@@ -59,7 +47,7 @@ export const CreateEvent = () => {
                             </FormControl>
                         )}
                         </Field>
-                        <Field type="hidden" className="fuck" name="host" />
+                        <Field type="hidden" className="fuck" name="userId" />
                         <Field type="text" name="tags">
                         {({ field, form }: {field:any, form:any}) => (
                             <FormControl isInvalid={form.errors.tags && form.touched.tags}>

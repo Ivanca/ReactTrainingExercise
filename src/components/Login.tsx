@@ -1,17 +1,9 @@
 import { Form, Field } from "formik"
 import { Formik } from "formik";
-import * as Yup from "yup";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { Link, Box, Heading, Button, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
 import { loginUser, useAuthDispatch } from "../context";
-
-
-const LoginSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string()
-    .min(8, 'Too Short!')
-    .required('Required')
-});
+import { LoginSchema } from '../schemas'
 
 
 export default function Login() {

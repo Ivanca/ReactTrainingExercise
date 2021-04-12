@@ -7,7 +7,6 @@ import { Field, Form, Formik } from 'formik';
 import { FormControl, FormLabel, Input, FormErrorMessage, Box, HStack, Radio, RadioGroup, Stack, Button, Text } from '@chakra-ui/react';
 import EventCard from './EventCard';
 import { useAuthState } from '../context';
-import { isDoStatement } from 'typescript';
 
 type EventsFeedProps = {
   favoritesOnly: boolean,
@@ -55,7 +54,7 @@ const EventsFeed = ({ favoritesOnly }: EventsFeedProps) => {
     return jsonRequest('GET', `${BACKEND_URL}/events?${parameters.join('&')}`);
   });
 
-  if (error) return (<div>'An error has occurred: ' + (error as any).message</div>);
+  if (error) return (<div>'An error has occurred: ' + {(error as any).message}</div>);
 
   const addToFavorites = (eventId: number) => {
     jsonRequest('POST', `${BACKEND_URL}/favoriteEvents`, userDetails?.token, {

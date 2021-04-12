@@ -12,7 +12,6 @@ function Site () {
     const eventsRedirect = <Redirect to="/events" />;
     const userDetails = useAuthState();
     const loggedIn = !!userDetails?.token;
-    console.log("loggedIn", loggedIn)
     return (
         <BrowserRouter>
             <Box maxW="xl" margin="auto">

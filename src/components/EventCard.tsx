@@ -10,7 +10,6 @@ type EventCardProps = {
 }
 
 const EventCard = ({event, loggedIn, addToFavorites}: EventCardProps) => {
-    console.log(event)
     return (
         <Box 
             className="event"
