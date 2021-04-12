@@ -1,6 +1,5 @@
 
-import React from "react";
-import { Link, Box, Flex, Text, Button, Stack } from "@chakra-ui/react";
+import { Link, Flex, Text, Button } from "@chakra-ui/react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { logout, useAuthDispatch, useAuthState } from "../context";
 
